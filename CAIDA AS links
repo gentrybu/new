@@ -1,0 +1,165 @@
+===========================================================================
+                        IPv4 Routed /24
+               Autonomous System (AS) Links Dataset
+===========================================================================
+http://www.caida.org/data/active/ipv4_routed_topology_aslinks_dataset.xml
+
+
+  ************************************************************************
+  *** NOTE: Please read the Data Format section for important information
+  ***       not covered by the AS links web page (all other text in this
+  ***       README is the same as the web page).
+  ************************************************************************
+
+
+This dataset is useful for studying the topology of the Internet at the
+level of Autonomous Systems (ASes), which are approximately network(s)
+under a single administrative control. ASes are an important abstraction
+because they are the "unit of routing policy" in the routing system of the
+global Internet. ASes peer with each other to exchange traffic, and these
+peering relationships define the high-level global Internet topology. For
+the purposes of analysis, these peering relationships are represented with
+an AS graph, where nodes represent ASes and links represent peering
+relationships.
+
+The IPv4 Routed /24 AS Links Dataset provides regular snapshots of AS links
+derived from the ongoing traceroute-like IP-level topology measurements
+that make up our IPv4 Routed /24 Topology Dataset [1]. We have collected this
+IP-level topology data since September 2007 using our next generation
+Archipelago (Ark) measurement infrastructure. For AS links data prior to
+September 2007, please see the related Skitter AS Links Dataset [2] (skitter AS
+links are no longer being collected).
+
+Data from the IPv4 Routed /24 Topology Dataset are processed by using
+RouteViews BGP data to identify the Autonomous System (AS) associated with
+each responding IP address and collapsing the original probed IP paths into
+a set of links between ASes. The process of converting IP addresses into
+Autonomous Systems involves potential distortion due to: 
+
+    *  No AS mapping for the IP address: some IP addresses appear in
+       topology probes but are not advertised by any AS;
+    *  AS Sets: an aggregated set of ASes advertises the prefix;
+    *  Multi-origin ASes (aka MOASes): several separate ASes advertise the
+       same prefix).
+
+AS Sets and Multi-origin ASes are identified specifically in the AS Links
+files; for more information, see the file format description in the data
+file header.
+
+Once IP addresses have been mapped to ASes, two types of AS links can be
+observed: direct links, in which two adjacent IP addresses map to two
+different ASes, and indirect links, in which two IP addresses in different
+ASes are separated by one or more hops for which we could not identify an
+AS (because some hops were non-responding or because we were not able to
+identify an AS for the IP address at a given hop). Indirect links are
+annotated with the size of the gap between ASes as measured in IP hops. 
+
+The current AS Links dataset fixes a few bugs in the skitter-based
+AS-links generation software:
+
+- The previous generation technique reported the first known
+  link between two ASes, so if both an indirect and a direct
+  link between the ASes was observed, and the indirect link
+  was seen first, only an indirect link between the ASes
+  would be reported.  The new version correctly reports
+  direct links.
+
+- The previous software also reported the first gap size it saw for
+  an indirect link between two ASes.  Now, if an indirect link with
+  a smaller gap size is observed, the smaller gap size is reported.
+
+
+===========================================================================
+DATA FORMAT
+===========================================================================
+
+The format of each AS links file is described within the header of
+the file itself.  The IPv4 Routed /24 Topology Dataset from which
+this AS Links data is derived uses separate teams that independently
+probe every routed /24 in the IPv4 address space.  Because different
+teams have different members, locations, and capabilities, each
+team completes a cycle of probing every routed /24 at a different
+rate.  
+
+The directory structure is organized as team-<TEAM-ID>/YEAR/FILE.
+For example,
+
+   team-1/2008/cycle-aslinks.l7.t1.c000065.20080102.txt.gz
+
+The components of the path are
+
+  TEAM-ID: the unique identifier of the team that did measurements,
+
+  YEAR: the year (UTC) in which the underlying topology data used
+        to generate the AS links files was collected, and
+
+  FILE: the AS links filename in the following format:
+
+    cycle-aslinks.l<LIST-ID>.t<TEAM-ID>.c<CYCLE-NUMBER>.DATE.txt.gz
+
+    where
+
+      LIST-ID is the list in use for the probing (multiple teams
+              can probe the same list; list 7 is the IPv4 Routed /24
+              Topology Dataset),
+
+      TEAM-ID is the same team identifier as in the path,
+
+      CYCLE-NUMBER is a counter of probing cycles through a list done by
+              *all teams* probing that list, and
+
+      DATE is the date in UTC of the start of that probe cycle.
+
+
+We have tried to make it easy for you to set up an automated process to
+download new AS links files as they are produced.  The best way to do
+this is to download the file aslinks-creation.log once a day.  Whenever
+we provide a new file for download, we add a new line to this log file.
+Simply download and examine this log file to discover which new files
+have been added since your last batch of downloads.  See the comments
+in the log file for further details.
+
+
+===========================================================================
+DATA USE TERMS AND CONDITIONS
+===========================================================================
+
+The AUA for these publicly-available data is included in pdf format as a
+separate file, caida_aua.pdf, in the same directory as this README file.
+
+When referencing this data (as required by the AUA), please use:
+
+    The IPv4 Routed /24 AS Links Dataset - <dates used>,
+    http://www.caida.org/data/active//ipv4_routed_topology_aslinks_dataset.xml.
+
+Also, please, report your publication to CAIDA
+  (http://www.caida.org/data/publications/report-publication.xml).
+
+
+===========================================================================
+ACKNOWLEDGMENTS
+===========================================================================
+
+    Special thanks to Matthew Luckie for development of and assistance with
+    scamper.
+
+
+The IPv4 Routed /24 AS Links Dataset was sponsored by:
+
+    * National Science Foundation
+    * Department of Homeland Security
+    * Cisco Systems
+
+
+===========================================================================
+REFERENCES
+===========================================================================
+
+[1] IPv4 Routed /24 Topology Dataset:
+	http://www.caida.org/data/active/ipv4_routed_24_topology_dataset.xml
+[2] Skitter AS Links Dataset:
+	http://www.caida.org/data/active/skitter_aslinks_dataset.xml
+[3] University of Oregon RouteViews Project:
+	http://www.routeviews.org/
+[4] Archipelago Project
+	http://www.caida.org/projects/ark/
